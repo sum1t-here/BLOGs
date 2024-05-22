@@ -1,6 +1,8 @@
 import { ChangeEvent, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { SignupInput } from '@sum1t/medium';
+import axios from 'axios';
+import { BACKEND_URL } from '../constants/constant';
 
 export const Auth = ({ type }: { type: 'signup' | 'signin' }) => {
   const [postInputs, setPostInputs] = useState<SignupInput>({
@@ -8,6 +10,22 @@ export const Auth = ({ type }: { type: 'signup' | 'signin' }) => {
     email: '',
     password: '',
   });
+
+  const navigate = useNavigate();
+
+  async function sendRequest() {
+    try {
+      const response = await axios.post(
+        `${BACKEND_URL}/api/v1/user/${type === 'signup' ? 'signup' : 'signin'}`,
+        postInputs
+      );
+      const jwt = response.data;
+      localStorage.setItem('token', jwt);
+      navigate('/blogs');
+    } catch (e) {
+      alert('Uh oh !! Something went wrong');
+    }
+  }
   return (
     <div className='flex flex-col justify-center h-screen'>
       <div className='flex justify-center'>
@@ -27,16 +45,18 @@ export const Auth = ({ type }: { type: 'signup' | 'signin' }) => {
             </div>
           </div>
           <div>
-            <LabelledInput
-              label='Name'
-              placeholder='John Doe'
-              onChange={(e) => {
-                setPostInputs((c) => ({
-                  ...c,
-                  name: e.target.value,
-                }));
-              }}
-            />
+            {type === 'signup' ? (
+              <LabelledInput
+                label='Name'
+                placeholder='John Doe'
+                onChange={(e) => {
+                  setPostInputs((c) => ({
+                    ...c,
+                    name: e.target.value,
+                  }));
+                }}
+              />
+            ) : null}
             <LabelledInput
               label='Password'
               placeholder='**********'
@@ -59,6 +79,7 @@ export const Auth = ({ type }: { type: 'signup' | 'signin' }) => {
               }}
             />
             <button
+              onClick={sendRequest}
               type='button'
               className='py-2.5 px-5 me-2 text-sm font-medium text-white focus:outline-none bg-slate-800 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 mt-5 w-full'
             >
