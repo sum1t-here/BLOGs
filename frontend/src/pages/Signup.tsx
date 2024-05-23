@@ -1,4 +1,3 @@
-import React from 'react';
 import { Auth, Quote } from '../components/index';
 
 function Signup() {
