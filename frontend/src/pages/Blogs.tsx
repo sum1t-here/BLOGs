@@ -1,5 +1,5 @@
 import { BlogCards, Appbar } from '../components';
-import { useBlogs, useBlog } from '../hooks';
+import { useBlogs } from '../hooks';
 
 function Blogs() {
   const { loading, blogs } = useBlogs();
